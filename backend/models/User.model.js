@@ -11,17 +11,22 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: [true, "Email already in use"],
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: [true, "Password is required"] },
-    role: {
+    avatar: {
       type: String,
-      enum: ["student", "instructor", "admin"],
-      default: "student",
+      trim: true,
     },
-    isBlocked: { type: Boolean, default: false },
+    bio: {
+      type: String,
+      trim: true,
+    },
+    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    blockList: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    password: { type: String, required: [true, "Password is required"] },
   },
   { timestamps: true }
 );
