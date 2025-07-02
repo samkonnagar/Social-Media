@@ -32,6 +32,11 @@ app.use((req, res, next) => {
   res.status(404).json(new ApiResponse(404, null, "Invalid Request"));
 });
 
+// Error handling
+import handleError from "./middleware/errorHandler.middleware.js";
+
+app.use(handleError);
+
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
