@@ -21,9 +21,17 @@ app.get("/", (req, res) =>
 
 // routes import
 import authRoutes from "./routes/auth.route.js";
+import fileRoutes from "./routes/file.route.js";
+import notificAationRoutes from "./routes/notifications.route.js";
+import postRoutes from "./routes/post.route.js";
+import userRoutes from "./routes/user.route.js";
 
 // routes declaration
 app.use("/api/auth", authRoutes);
+app.use("/api/upload", fileRoutes);
+app.use("/api/notifications", notificAationRoutes);
+app.use("/api/post", postRoutes);
+app.use("/api/users", userRoutes);
 
 // 404 Handler for undefined routes
 import { ApiResponse } from "./utils/ApiResponse.js";
