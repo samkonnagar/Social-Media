@@ -12,8 +12,10 @@ import {
   handleUpdateComment,
   handleDeleteComment,
 } from "../controllers/post.controller.js";
+import { verifyJWT } from "../middleware/auth.middleware.js";
 
 const router = Router();
+router.use(verifyJWT);
 
 router.route("/").post(handleNewPost);
 router.route("/").get(handleAllPublicPosts);

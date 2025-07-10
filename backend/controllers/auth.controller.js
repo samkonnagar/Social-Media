@@ -118,11 +118,50 @@ const handleLoginUser = async (req, res) => {
 };
 
 const handleGetUser = async (req, res) => {
-  res.json({ message: "Feature not added yet!" });
+  let user = null
+  if (req.query?.id) {
+    const id = req.query.id;
+    user = await UserModel.findById(id).select("-password -__v")
+    if (!user) {
+      throw new ApiError(401, "Invalid Id")
+    }
+  } else {
+    user = req?.user
+  }
+  // this controller not complted yet!
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        user,
+      },
+      "Success"
+    )
+  );
 };
 
 const handleUpdateUser = async (req, res) => {
-  res.json({ message: "Feature not added yet!" });
+  const { fullName, email } = req.body;
+
+  if (!fullName || !email) {
+    throw new ApiError(400, "all fields are required");
+  }
+
+  const user = await UserModel.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        name: fullName,
+        email,
+        bio: req.body?.bio
+      },
+    },
+    { new: true }
+  ).select("-password -__v");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account updated successfully"));
 };
 
 export { handleRegisterUser, handleLoginUser, handleGetUser, handleUpdateUser };

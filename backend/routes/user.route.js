@@ -8,8 +8,10 @@ import {
   handleGetFollowers,
   handleGetFollowing,
 } from "../controllers/user.controller.js";
+import { verifyJWT } from "../middleware/auth.middleware.js";
 
 const router = Router();
+router.use(verifyJWT);
 
 router.route("/").get(handleGetAllUser);
 router.route("/:id/block").put(handleBlockUser);
