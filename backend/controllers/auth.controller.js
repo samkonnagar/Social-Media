@@ -118,15 +118,21 @@ const handleLoginUser = async (req, res) => {
 };
 
 const handleGetUser = async (req, res) => {
-  let user = null
+  let user = null;
   if (req.query?.id) {
     const id = req.query.id;
-    user = await UserModel.findById(id).select("-password -__v")
+    user = await UserModel.findById(id).select("-password -__v");
     if (!user) {
-      throw new ApiError(401, "Invalid Id")
+      throw new ApiError(401, "Invalid Id");
+    }
+    if (req?.user?.blockList.includes(user._id)) {
+      throw new ApiError(400, "You bloked this user");
+    }
+    if (user.blockList.includes(req?.user._id)) {
+      throw new ApiError(400, "You bloked by this user");
     }
   } else {
-    user = req?.user
+    user = req?.user;
   }
   // this controller not complted yet!
   return res.status(200).json(
@@ -153,7 +159,7 @@ const handleUpdateUser = async (req, res) => {
       $set: {
         name: fullName,
         email,
-        bio: req.body?.bio
+        bio: req.body?.bio,
       },
     },
     { new: true }
