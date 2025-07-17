@@ -42,6 +42,30 @@ const handleDeleteComment = async (req, res) => {
   res.json({ message: "Delete a comment" });
 };
 
+const handleGetUserFeed = async (req, res) => {
+  res.json({ message: "Delete a comment" });
+};
+
+const handleGetSavedPosts = async (req, res) => {
+  res.json({ message: "Delete a comment" });
+};
+
+const handleSharePost = async (req, res) => {
+  res.json({ message: "Delete a comment" });
+};
+
+const handleSavePost = async (req, res) => {
+  res.json({ message: "Delete a comment" });
+};
+
+const handleUnsavePost = async (req, res) => {
+  res.json({ message: "Delete a comment" });
+};
+
+const handleTrackView = async (req, res) => {
+  res.json({ message: "Delete a comment" });
+};
+
 export {
   handleNewPost,
   handleAllPublicPosts,
@@ -54,4 +78,10 @@ export {
   handleAddComment,
   handleUpdateComment,
   handleDeleteComment,
+  handleGetUserFeed,
+  handleGetSavedPosts,
+  handleSharePost,
+  handleSavePost,
+  handleUnsavePost,
+  handleTrackView
 };
