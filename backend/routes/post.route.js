@@ -19,12 +19,13 @@ import {
   handleGetUserFeed,
 } from "../controllers/post.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
+import { fileUpload } from "../middleware/multer.middleware.js";
 
 const router = Router();
 router.use(verifyJWT);
 
 // Create & List
-router.route("/").post(handleNewPost).get(handleAllPublicPosts);
+router.route("/").post(fileUpload("posts").array("post_imgs", 5), handleNewPost).get(handleAllPublicPosts);
 
 // User-specific
 router.route("/user/:userId").get(handleGetPostByUserId);
