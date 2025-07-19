@@ -2,6 +2,12 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./config/db.config.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Create __dirname equivalent in ES6 modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -32,6 +38,9 @@ app.use("/api/upload", fileRoutes);
 app.use("/api/notifications", notificAationRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/users", userRoutes);
+
+// Serve static files from the "uploads/posts" directory
+app.use("/files", express.static(path.join(__dirname, "uploads", "posts")));
 
 // 404 Handler for undefined routes
 import { ApiResponse } from "./utils/ApiResponse.js";

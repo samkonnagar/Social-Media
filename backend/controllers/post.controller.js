@@ -1,5 +1,33 @@
+import PostModel from "../models/Post.model.js";
+import CommentModel from "../models/Comment.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
+import { formatFileData } from "../utils/upload.utils.js";
+
 const handleNewPost = async (req, res) => {
-  res.json({ message: "Create a new post" });
+  const { caption, tags, privacy } = req.body;
+  const author = req.user?._id;
+  const postUrls = formatFileData(req.files || []);
+  const tagArr = tags?.split(",").map((data) => data.trim().toLowerCase());
+  if (!postUrls) throw new ApiError(400, "Choose Atleast One Pic");
+  const post = await PostModel.create({
+    caption: caption ?? "",
+    postUrls,
+    author,
+    tags: tagArr ?? [],
+    privacy,
+  });
+  if (!post) {
+    throw new ApiError(500, "Something went wrong while create a post");
+  }
+  post.postUrls.forEach((urlObj) => {
+    urlObj.url = `${process.env.DOMAIN_NAME}/files/${urlObj.url}`;
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, post, "Post created successfully"));
 };
 
 const handleAllPublicPosts = async (req, res) => {
@@ -83,5 +111,5 @@ export {
   handleSharePost,
   handleSavePost,
   handleUnsavePost,
-  handleTrackView
+  handleTrackView,
 };
