@@ -18,7 +18,6 @@ const postSchema = new Schema(
     postUrls: [dataUrl],
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     sharedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
     savedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
     views: { type: Number, default: 0 },
