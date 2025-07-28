@@ -3,7 +3,8 @@ import CommentModel from "../models/Comment.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
-import { formatFileData } from "../utils/upload.utils.js";
+import { deleteFile, formatFileData } from "../utils/upload.utils.js";
+import UserModel from "../models/User.model.js";
 
 const handleNewPost = async (req, res) => {
   const { caption, tags, privacy } = req.body;
@@ -21,9 +22,6 @@ const handleNewPost = async (req, res) => {
   if (!post) {
     throw new ApiError(500, "Something went wrong while create a post");
   }
-  post.postUrls.forEach((urlObj) => {
-    urlObj.url = `${process.env.DOMAIN_NAME}/files/${urlObj.url}`;
-  });
 
   return res
     .status(201)
@@ -75,7 +73,7 @@ const handleGetPostDetails = async (req, res) => {
   }).populate("author", "name avatar").select(
     "-post -__v"
   );
-  const userPost = post.toObject();
+  const userPost = post.toJSON();
 
   userPost.comments = comments;
   return res.status(200).json(new ApiResponse(200, userPost));
@@ -86,11 +84,38 @@ const handleUpdatePost = async (req, res) => {
 };
 
 const handleDeletePost = async (req, res) => {
-  res.json({ message: "Delete own post" });
+  const id = req.params?.id;
+  if (!id) throw new ApiError(400, "Invalid Post Id");
+  const post = await PostModel.findOneAndDelete({
+    _id: new mongoose.Types.ObjectId(id),
+    author: new mongoose.Types.ObjectId(req.user._id),
+  });
+
+  if (!post) throw new ApiError(403, "Unauthorized or post not found")
+
+  post.postUrls.forEach((file) => {
+    deleteFile(`uploads/posts/${file.url}`);
+  });
+
+  await CommentModel.deleteMany({ post: new mongoose.Types.ObjectId(id) });
+
+  return res.status(200).json(new ApiResponse(200, {}, "Post deleted"));
 };
 
 const handleGetPostByUserId = async (req, res) => {
-  res.json({ message: "Get posts by a user" });
+  const userId = req.params?.userId;
+  if (!userId) throw new ApiError(400, "Invalid User Id");
+  const user = await UserModel.findById(userId).select("blockList");
+  if (!user) throw new ApiError(404, "User not found");
+  // Check if the user is blocked by the current user
+  const isBlocked = user?.blockList?.includes(req.user._id);
+  if (isBlocked) throw new ApiError(403, "You are blocked by this user");
+
+  const posts = await PostModel.find({ author: new mongoose.Types.ObjectId(userId) })
+    .populate("author", "name avatar")
+    .sort({ createdAt: -1 });
+  if (!posts) throw new ApiError(404, "No Posts Available");
+  return res.status(200).json(new ApiResponse(200, posts));
 };
 
 const handleLikePost = async (req, res) => {

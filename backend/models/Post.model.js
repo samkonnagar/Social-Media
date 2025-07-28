@@ -31,4 +31,20 @@ const postSchema = new Schema(
   { timestamps: true }
 );
 
+postSchema.set("toJSON", {
+  virtuals: true,
+  transform(doc, ret) {
+    const baseUrl = process.env.DOMAIN_NAME + '/files/';
+
+    if (Array.isArray(ret.postUrls)) {
+      ret.postUrls = ret.postUrls.map((item) => ({
+        ...item,
+        url: baseUrl + item.url,
+      }));
+    }
+
+    return ret;
+  },
+});
+
 export default model("Post", postSchema);
