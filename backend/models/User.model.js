@@ -58,4 +58,16 @@ userSchema.methods.generateToken = function () {
   );
 };
 
+userSchema.set("toJSON", {
+  virtuals: true,
+  transform(doc, ret) {
+    const baseUrl = process.env.DOMAIN_NAME + '/profile/';
+    if (ret.avatar) {
+      ret.avatar = baseUrl + ret.avatar;
+    }
+
+    return ret;
+  },
+});
+
 export default model("User", userSchema);

@@ -70,9 +70,9 @@ const handleGetPostDetails = async (req, res) => {
   if (!post) throw new ApiError(404, "Post not found");
   const comments = await CommentModel.find({
     post: new mongoose.Types.ObjectId(id),
-  }).populate("author", "name avatar").select(
-    "-post -__v"
-  );
+  })
+    .populate("author", "name avatar")
+    .select("-post -__v");
   const userPost = post.toJSON();
 
   userPost.comments = comments;
@@ -91,7 +91,7 @@ const handleDeletePost = async (req, res) => {
     author: new mongoose.Types.ObjectId(req.user._id),
   });
 
-  if (!post) throw new ApiError(403, "Unauthorized or post not found")
+  if (!post) throw new ApiError(403, "Unauthorized or post not found");
 
   post.postUrls.forEach((file) => {
     deleteFile(`uploads/posts/${file.url}`);
@@ -111,7 +111,9 @@ const handleGetPostByUserId = async (req, res) => {
   const isBlocked = user?.blockList?.includes(req.user._id);
   if (isBlocked) throw new ApiError(403, "You are blocked by this user");
 
-  const posts = await PostModel.find({ author: new mongoose.Types.ObjectId(userId) })
+  const posts = await PostModel.find({
+    author: new mongoose.Types.ObjectId(userId),
+  })
     .populate("author", "name avatar")
     .sort({ createdAt: -1 });
   if (!posts) throw new ApiError(404, "No Posts Available");
@@ -119,11 +121,34 @@ const handleGetPostByUserId = async (req, res) => {
 };
 
 const handleLikePost = async (req, res) => {
-  res.json({ message: "Like a post" });
+  const postId = req.params?.id;
+  if (!postId) throw new ApiError(400, "Invalid Post Id");
+  const post = await PostModel.findById(postId).populate(
+    "author",
+    "name avatar"
+  );
+  if (!post) throw new ApiError(404, "Post not found");
+  if (post.likes.includes(req.user._id))
+    throw new ApiError(400, "You already liked this post");
+  post.likes.push(req.user._id);
+  await post.save();
+
+  res.status(200).json(new ApiResponse(200, post, "Post liked successfully"));
 };
 
 const handleUnlikePost = async (req, res) => {
-  res.json({ message: "Unlike a post" });
+  const postId = req.params?.id;
+  if (!postId) throw new ApiError(400, "Invalid Post Id");
+  const post = await PostModel.findById(postId).populate(
+    "author",
+    "name avatar"
+  );
+  if (!post) throw new ApiError(404, "Post not found");
+  if (!post.likes.includes(req.user._id))
+    throw new ApiError(400, "You haven't liked this post yet");
+  post.likes = post.likes.filter((like) => !like.equals(req.user._id));
+  await post.save();
+  res.status(200).json(new ApiResponse(200, post, "Post unliked successfully"));
 };
 
 const handleAddComment = async (req, res) => {
@@ -142,11 +167,30 @@ const handleAddComment = async (req, res) => {
 };
 
 const handleUpdateComment = async (req, res) => {
-  res.json({ message: "Update a comment" });
+  const { text } = req.body;
+  if (!text) throw new ApiError(400, "Text is required to update comment");
+  const commentId = req.params?.commentId;
+  if (!commentId) throw new ApiError(400, "Invalid Comment Id");
+  const comment = await CommentModel.findOneAndUpdate(
+    { _id: commentId, author: req.user._id },
+    { text },
+    { new: true }
+  ).populate("author", "name avatar");
+  if (!comment) throw new ApiError(404, "Comment not found or unauthorized");
+
+  res.status(200).json(new ApiResponse(200, comment, "Comment updated"));
 };
 
 const handleDeleteComment = async (req, res) => {
-  res.json({ message: "Delete a comment" });
+  const commentId = req.params?.commentId;
+  if (!commentId) throw new ApiError(400, "Invalid Comment Id");
+  const comment = await CommentModel.findOneAndDelete({
+    _id: commentId,
+    author: req.user._id,
+  });
+  if (!comment) throw new ApiError(404, "Comment not found or unauthorized");
+
+  res.status(200).json(new ApiResponse(200, {}, "Comment deleted"));
 };
 
 const handleGetUserFeed = async (req, res) => {

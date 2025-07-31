@@ -25,7 +25,10 @@ const router = Router();
 router.use(verifyJWT);
 
 // Create & List
-router.route("/").post(fileUpload("posts").array("post_imgs", 5), handleNewPost).get(handleAllPublicPosts);
+router
+  .route("/")
+  .post(fileUpload("posts").array("post_imgs", 5), handleNewPost)
+  .get(handleAllPublicPosts);
 
 // User-specific
 router.route("/user/:userId").get(handleGetPostByUserId);
@@ -50,7 +53,7 @@ router.route("/:id/view").post(handleTrackView);
 // Comments
 router.route("/:id/comment").post(handleAddComment);
 router
-  .route("/:id/comment/:commentId")
+  .route("/:commentId/comment")
   .put(handleUpdateComment)
   .delete(handleDeleteComment);
 

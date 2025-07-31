@@ -1,14 +1,12 @@
 import { Router } from "express";
-import {
-  handleProfileImage,
-  handlePostImage,
-  handleServeFile,
-} from "../controllers/file.controller.js";
+import { handleProfileImage } from "../controllers/file.controller.js";
+import { fileUpload } from "../middleware/multer.middleware.js";
+import { verifyJWT } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.route("/avatar").post(handleProfileImage);
-router.route("/post").post(handlePostImage);
-router.route("/:filename").get(handleServeFile);
+router
+  .route("/avatar")
+  .post(verifyJWT, fileUpload("profiles").single("avatar"), handleProfileImage);
 
 export default router;

@@ -42,6 +42,12 @@ app.use("/api/users", userRoutes);
 // Serve static files from the "uploads/posts" directory
 app.use("/files", express.static(path.join(__dirname, "uploads", "posts")));
 
+// Serve static files from the "uploads/profiles" directory
+app.use(
+  "/profile",
+  express.static(path.join(__dirname, "uploads", "profiles"))
+);
+
 // 404 Handler for undefined routes
 import { ApiResponse } from "./utils/ApiResponse.js";
 
