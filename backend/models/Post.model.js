@@ -19,7 +19,6 @@ const postSchema = new Schema(
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     sharedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    savedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
     views: { type: Number, default: 0 },
     tags: [{ type: String, trim: true }],
     privacy: {

@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { deleteFile, formatFileData } from "../utils/upload.utils.js";
 import UserModel from "../models/User.model.js";
+import { addView } from "../utils/addView.utils.js";
 
 const handleNewPost = async (req, res) => {
   const { caption, tags, privacy } = req.body;
@@ -57,6 +58,10 @@ const handleAllPublicPosts = async (req, res) => {
 
   if (posts.length < limit) data.auto_avalable = false;
 
+  posts.forEach((post) => {
+    addView(post._id);
+  });
+
   return res.status(200).json(new ApiResponse(200, data));
 };
 
@@ -66,8 +71,8 @@ const handleGetPostDetails = async (req, res) => {
     "author",
     "name avatar"
   );
-
   if (!post) throw new ApiError(404, "Post not found");
+  addView(post._id);
   const comments = await CommentModel.find({
     post: new mongoose.Types.ObjectId(id),
   })
@@ -193,28 +198,83 @@ const handleDeleteComment = async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Comment deleted"));
 };
 
-const handleGetUserFeed = async (req, res) => {
-  res.json({ message: "Delete a comment" });
-};
-
 const handleGetSavedPosts = async (req, res) => {
-  res.json({ message: "Delete a comment" });
+  const userId = req.user._id;
+  const user = await UserModel.findById(userId).populate("savedPosts");
+  if (!user) throw new ApiError(404, "User not found");
+  if (user.savedPosts.length === 0) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, [], "No saved posts found"));
+  }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        user.savedPosts,
+        "Saved posts retrieved successfully"
+      )
+    );
 };
 
 const handleSharePost = async (req, res) => {
-  res.json({ message: "Delete a comment" });
+  const postId = req.params?.id;
+  const user = await UserModel.findById(req.user._id);
+  if (!user) throw new ApiError(404, "User not found");
+  if (!postId) throw new ApiError(400, "Invalid Post Id");
+  const post = await PostModel.findById(postId);
+  if (!post) throw new ApiError(404, "Post not found");
+  post.sharedBy.push(user._id);
+  await post.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, post, "Post shared successfully"));
 };
 
 const handleSavePost = async (req, res) => {
-  res.json({ message: "Delete a comment" });
+  const postId = req.params?.id;
+  const id = req.user._id;
+  if (!postId) throw new ApiError(400, "Invalid Post Id");
+  const post = await PostModel.findById(postId).populate(
+    "author",
+    "name avatar"
+  );
+  if (!post) throw new ApiError(404, "Post not found");
+  const user = await UserModel.findById(id);
+  if (!user) throw new ApiError(404, "User not found");
+  if (user.savedPosts.includes(postId)) {
+    throw new ApiError(400, "Post already saved");
+  }
+  user.savedPosts.push(postId);
+  await user.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, post, "Post saved successfully"));
 };
 
 const handleUnsavePost = async (req, res) => {
-  res.json({ message: "Delete a comment" });
-};
-
-const handleTrackView = async (req, res) => {
-  res.json({ message: "Delete a comment" });
+  const postId = req.params?.id;
+  const id = req.user._id;
+  if (!postId) throw new ApiError(400, "Invalid Post Id");
+  const post = await PostModel.findById(postId).populate(
+    "author",
+    "name avatar"
+  );
+  if (!post) throw new ApiError(404, "Post not found");
+  const user = await UserModel.findById(id);
+  if (!user) throw new ApiError(404, "User not found");
+  if (!user.savedPosts.includes(postId)) {
+    throw new ApiError(400, "Post not saved yet");
+  }
+  user.savedPosts = user.savedPosts.filter(
+    (savedPostId) => !savedPostId.equals(postId)
+  );
+  await user.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Post unsaved successfully"));
 };
 
 export {
@@ -229,10 +289,8 @@ export {
   handleAddComment,
   handleUpdateComment,
   handleDeleteComment,
-  handleGetUserFeed,
   handleGetSavedPosts,
   handleSharePost,
   handleSavePost,
   handleUnsavePost,
-  handleTrackView,
 };

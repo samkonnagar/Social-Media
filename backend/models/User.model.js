@@ -28,6 +28,7 @@ const userSchema = new Schema(
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
     blockList: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    savedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     password: { type: String, required: [true, "Password is required"] },
   },
   { timestamps: true }

@@ -15,8 +15,6 @@ import {
   handleSavePost,
   handleUnsavePost,
   handleGetSavedPosts,
-  handleTrackView,
-  handleGetUserFeed,
 } from "../controllers/post.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import { fileUpload } from "../middleware/multer.middleware.js";
@@ -32,7 +30,6 @@ router
 
 // User-specific
 router.route("/user/:userId").get(handleGetPostByUserId);
-router.route("/feed").get(handleGetUserFeed);
 router.route("/saved").get(handleGetSavedPosts);
 
 // Individual Post
@@ -48,7 +45,6 @@ router.route("/:id/unlike").post(handleUnlikePost);
 router.route("/:id/share").post(handleSharePost);
 router.route("/:id/save").post(handleSavePost);
 router.route("/:id/unsave").post(handleUnsavePost);
-router.route("/:id/view").post(handleTrackView);
 
 // Comments
 router.route("/:id/comment").post(handleAddComment);
