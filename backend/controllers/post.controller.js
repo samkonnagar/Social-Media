@@ -85,7 +85,27 @@ const handleGetPostDetails = async (req, res) => {
 };
 
 const handleUpdatePost = async (req, res) => {
-  res.json({ message: "Update own post" });
+  const postId = req.params?.id;
+  const post = await PostModel.findOne({
+    _id: postId,
+    author: req.user?._id,
+  });
+  if (!post) throw new ApiError(404, "Post not found or unauthorized");
+
+  const caption = req.body?.caption;
+  const tags = req.body?.tags;
+  const privacy = req.body?.privacy;
+
+  if (caption) post.caption = caption;
+  if (privacy) post.privacy = privacy;
+  if (tags) {
+    const tagArr = tags.split(",").map((data) => data.trim().toLowerCase());
+    post.tags = tagArr;
+  }
+
+  post.save();
+
+  res.status(200).json(new ApiResponse(200, post, "Post updated successfully"));
 };
 
 const handleDeletePost = async (req, res) => {
