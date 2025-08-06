@@ -7,7 +7,15 @@ const notificationSchema = new Schema(
       type: String,
       trim: true,
     },
-    isRead: { type: Boolean, default: false },
+    type: {
+      type: String,
+      enum: ["Post", "User", "Other"],
+      default: "Other",
+    },
+    id: {
+      type: Schema.Types.ObjectId,
+      refPath: "type",
+    },
   },
   { timestamps: true }
 );

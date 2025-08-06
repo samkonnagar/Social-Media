@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { deleteFile, formatFileData } from "../utils/upload.utils.js";
 import UserModel from "../models/User.model.js";
 import { addView } from "../utils/addView.utils.js";
+import { setNotification } from "../utils/notification.utils.js";
 
 const handleNewPost = async (req, res) => {
   const { caption, tags, privacy } = req.body;
@@ -22,6 +23,19 @@ const handleNewPost = async (req, res) => {
   });
   if (!post) {
     throw new ApiError(500, "Something went wrong while create a post");
+  }
+
+  // send notification to followers
+  const user = await UserModel.findById(author).select("name followers");
+  if (user && user.followers.length > 0) {
+    user.followers.forEach(async (followerId) => {
+      await setNotification(
+        `${user.name} has created a new post`,
+        followerId,
+        "Post",
+        post._id
+      );
+    });
   }
 
   return res
