@@ -1,0 +1,26 @@
+export const posts = [
+  {
+    id: "p1",
+    authorId: "u1",
+    authorName: "Rohit Sharma",
+    authorAvatar: "/src/assets/default-avatar.jpg",
+    time: "2h",
+    images: ["/src/assets/post1.jpg"],
+    caption: "Sunset today was insane! #nature #photography",
+    likes: 120,
+    comments: 12,
+    tags: ["nature", "photography"],
+  },
+  {
+    id: "p2",
+    authorId: "u2",
+    authorName: "Aisha Khan",
+    authorAvatar: "/src/assets/default-avatar.jpg",
+    time: "1d",
+    images: ["/src/assets/post2.jpg", "/src/assets/post3.jpg"],
+    caption: "Weekend vibes ✨",
+    likes: 320,
+    comments: 44,
+    tags: ["weekend", "vibes"],
+  },
+];
