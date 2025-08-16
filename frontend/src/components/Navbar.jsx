@@ -1,5 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { users } from "../data/users";
+import { House } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -11,33 +13,28 @@ export default function Navbar() {
             onClick={() => navigate("/")}
             className="flex items-center gap-2"
           >
-            <img
-              src="/src/assets/logo.png"
-              alt="logo"
-              className="h-8 w-8 rounded"
-            />
-            <span className="font-semibold text-lg hidden md:inline">
+            <img src="/logo.png" alt="logo" className="h-8 w-8 rounded" />
+            <span className="font-semibold text-lg hidden md:inline text-white">
               MySocial
             </span>
           </button>
-          <div className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1 gap-2">
-            <input
-              className="bg-transparent outline-none text-sm w-64"
-              placeholder="Search"
-            />
-          </div>
+        </div>
+        <div className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1 gap-2">
+          <input
+            className="bg-transparent outline-none text-sm w-64"
+            placeholder="Search"
+          />
         </div>
 
         <nav className="flex items-center gap-4">
           <Link
             to="/"
-            className="hidden md:inline px-3 py-2 rounded hover:bg-gray-100"
           >
-            Home
+            <House className="text-white"/>
           </Link>
           <Link to="/profile/u1" className="flex items-center gap-2">
             <img
-              src="/src/assets/default-avatar.jpg"
+              src={users[0].avatar}
               className="h-8 w-8 rounded-full border"
               alt="me"
             />

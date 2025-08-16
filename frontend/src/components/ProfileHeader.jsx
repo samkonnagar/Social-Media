@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 export default function ProfileHeader({ user }) {
   const navigate = useNavigate();
   return (
-    <div className="bg-white rounded-md shadow overflow-hidden">
+    <div className="bg-white rounded-md shadow overflow-hidden relative mb-2">
       <div
-        className="profile-cover"
+        className="profile-cover absolute top-0 left-0 w-full h-28"
         style={{
-          backgroundImage: `url(${user.cover || "/src/assets/cover.jpg"})`,
+          backgroundImage: `url(${user.cover || "/cover.jpg"})`,
         }}
       />
-      <div className="px-6 pb-6 -mt-12">
+      <div className="px-6 pb-6 mt-12 relative z-10">
         <div className="flex items-end justify-between">
           <div className="flex items-end gap-4">
             <img
@@ -26,10 +26,10 @@ export default function ProfileHeader({ user }) {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-purple-600 text-white rounded">
+            <button className="px-2 cursor-pointer py-1 text-sm bg-purple-600 text-white rounded">
               Follow
             </button>
-            <button className="px-4 py-2 border rounded">Message</button>
+            <button className="px-2 cursor-pointer py-1 text-sm border rounded">Message</button>
           </div>
         </div>
 

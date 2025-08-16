@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 export default function SidebarRight() {
   return (
-    <aside className="w-80 pl-6 hidden xl:block">
-      <div className="bg-white rounded-md shadow p-4 sticky top-20">
+    <aside className="w-80 pl-6 hidden xl:block  sticky top-20">
+      <div className="bg-white rounded-md shadow p-4">
         <h3 className="font-semibold mb-3">Suggested</h3>
         <div className="space-y-3">
           {users.map((u) => (

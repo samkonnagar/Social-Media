@@ -6,6 +6,7 @@ import SidebarRight from "../components/SidebarRight";
 import ProfileHeader from "../components/ProfileHeader";
 import { users } from "../data/users";
 import { posts } from "../data/posts";
+import Composer from "../components/Composer";
 
 export default function Profile() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ export default function Profile() {
   return (
     <>
       <ProfileHeader user={user} />
+      <Composer/>
       <div className="bg-white rounded-md shadow p-4">
         <h3 className="font-semibold mb-4">Posts</h3>
         <div className="grid grid-cols-3 gap-3">

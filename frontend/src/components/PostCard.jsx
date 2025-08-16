@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Heart, MessageSquare, Share2, ThumbsUp } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { users } from "../data/users.js";
+import Slider from "../utils/Slider.jsx";
 
 export default function PostCard({ post }) {
   const [liked, setLiked] = useState(false);
@@ -37,16 +39,7 @@ export default function PostCard({ post }) {
               alt=""
             />
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              {post.images.map((im, i) => (
-                <img
-                  key={i}
-                  src={im}
-                  className="h-48 w-full object-cover rounded"
-                  alt=""
-                />
-              ))}
-            </div>
+            <Slider files={post.images} />
           )}
         </div>
 
@@ -80,11 +73,7 @@ export default function PostCard({ post }) {
 
         {/* comment box */}
         <div className="mt-3 flex items-center gap-3">
-          <img
-            src="/src/assets/default-avatar.jpg"
-            alt=""
-            className="h-8 w-8 rounded-full"
-          />
+          <img src={users[0].avatar} alt="" className="h-8 w-8 rounded-full" />
           <input
             placeholder="Write a comment..."
             className="flex-1 rounded-full px-4 py-2 bg-gray-50 outline-none"

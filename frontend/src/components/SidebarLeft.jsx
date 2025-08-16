@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 export default function SidebarLeft() {
   const me = users[0];
   return (
-    <aside className="w-72 pr-6 hidden xl:block">
-      <div className="bg-white rounded-md shadow p-4 sticky top-20">
+    <aside className="w-72 pr-6 hidden xl:block sticky top-20">
+      <div className="bg-white rounded-md shadow p-4">
         <div className="flex items-center gap-3">
           <img src={me.avatar} alt="avatar" className="h-12 w-12 rounded-full" />
           <div>

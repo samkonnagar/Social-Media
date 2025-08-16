@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { posts } from "../data/posts";
+import { users } from "../data/users";
 
 export default function Composer({ onCreate }) {
   const [text, setText] = useState("");
@@ -34,7 +35,7 @@ export default function Composer({ onCreate }) {
     <div className="bg-white rounded-md shadow p-4 mb-6">
       <div className="flex gap-3">
         <img
-          src="/src/assets/default-avatar.jpg"
+          src={users[0].avatar}
           alt=""
           className="h-11 w-11 rounded-full"
         />
