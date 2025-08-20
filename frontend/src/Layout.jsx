@@ -6,8 +6,7 @@ import { Outlet } from "react-router-dom";
 
 function Layout() {
   const background = {
-    background: "#8360c3",
-    background: "-webkit-linear-gradient(to right, #8360c3, #2ebf91)",
+    backgroundColor: "#8360c3",
     background: "linear-gradient(to right, #8360c3, #2ebf91)",
   };
   return (
