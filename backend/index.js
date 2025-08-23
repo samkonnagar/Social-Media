@@ -4,12 +4,22 @@ import express from "express";
 import connectDB from "./config/db.config.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors";
 
 // Create __dirname equivalent in ES6 modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// cors allow
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Built In Middlewares
 app.use(express.json({ limit: "5mb" }));

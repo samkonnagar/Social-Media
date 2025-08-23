@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ErrorPop from "../utils/ErrorPop";
+import { errorObj } from "../context/errorContext/errorContext";
+import { userSignIn } from "../api/auth.js";
 
 export default function Login() {
+  const { isError, errMessage, errType, errorDispatch } = errorObj();
   const [data, setData] = useState({
     email: "",
     password: "",
   });
-  
-  const [error, setError] = useState({
-    isError: false,
-    message: "",
-    type: "",
-  });
-
-  console.log(data);
 
   const handleChange = (e) => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -22,24 +17,33 @@ export default function Login() {
 
   const handleLogin = () => {
     if (data.email !== "" && data.password !== "") {
+      userSignIn(data)
+        .then((res) => res.data)
+        .then((data) => console.log(data))
+        .catch((err) => console.warn(err));
     } else {
-      setError({
-        message: "Please Enter Email and Password",
-        type: "warning",
-        isError: true,
+      errorDispatch({
+        type: "SET_ERROR",
+        payload: { message: "Enter email and password", type: "warning" },
       });
     }
   };
 
   useEffect(() => {
-    if (error.isError) {
-      setTimeout(() => setError({ message: "", type: "", isError: false }), 5000);
+    if (isError) {
+      setTimeout(
+        () =>
+          errorDispatch({
+            type: "CLEAR_ERROR",
+          }),
+        5000
+      );
     }
-  }, [error]);
+  }, [isError]);
 
   return (
     <>
-      {error.isError && <ErrorPop error={error} />}
+      {isError && <ErrorPop message={errMessage} type={errType} />}
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
         <div className="bg-white rounded-lg shadow p-8 w-full max-w-md">
           <h2 className="text-2xl font-semibold mb-6">Welcome back</h2>
