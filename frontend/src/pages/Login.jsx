@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import ErrorPop from "../utils/ErrorPop";
 import { errorObj } from "../context/errorContext/errorContext";
 import { userSignIn } from "../api/auth.js";
+import { dataObj } from "../context/authContext/AuthContext.jsx";
 
-export default function Login() {
+export default function Login({ setIsLoggedin }) {
   const { isError, errMessage, errType, errorDispatch } = errorObj();
+  const { user, isFetching, dispatch } = dataObj();
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -17,10 +19,29 @@ export default function Login() {
 
   const handleLogin = () => {
     if (data.email !== "" && data.password !== "") {
+      dispatch({
+        type: "LOGIN_START",
+      });
       userSignIn(data)
         .then((res) => res.data)
-        .then((data) => console.log(data))
-        .catch((err) => console.warn(err));
+        .then((data) => {
+          dispatch({
+            type: "LOGIN_SUCCESS",
+            payload: data?.data?.user,
+          });
+          errorDispatch({
+            type: "SET_ERROR",
+            payload: { message: data?.message, type: "success" },
+          });
+          setIsLoggedin(true);
+        })
+        .catch((err) => {
+          const msg = err.response.data.message;
+          errorDispatch({
+            type: "SET_ERROR",
+            payload: { message: msg, type: "error" },
+          });
+        });
     } else {
       errorDispatch({
         type: "SET_ERROR",
