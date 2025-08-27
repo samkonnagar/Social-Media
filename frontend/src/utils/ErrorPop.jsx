@@ -9,7 +9,7 @@ function ErrorPop({ message, type}) {
       "text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300",
   };
 
-  const classes = `p-4 mb-4 text-sm rounded-lg fixed right-2 top-2 ${
+  const classes = `p-4 mb-4 text-sm rounded-lg fixed right-2 top-2 z-1000 ${
     errors[type ?? "danger"]
   }`;
   return (
