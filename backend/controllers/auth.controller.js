@@ -45,6 +45,7 @@ const handleRegisterUser = async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    expires: new Date(Date.now() + 2592000000)
   };
   // generateToken
   const token = await createdUser.generateToken();
@@ -97,6 +98,7 @@ const handleLoginUser = async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    expires: new Date(Date.now() + 2592000000)
   };
 
   // generateToken
