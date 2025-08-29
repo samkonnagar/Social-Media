@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { posts } from "../data/posts";
-import { users } from "../data/users";
+import { dataObj } from "../context/authContext/AuthContext";
 
 export default function Composer({ onCreate }) {
+  const {user} = dataObj()
   const [text, setText] = useState("");
   const [images, setImages] = useState([]);
 
@@ -35,8 +35,8 @@ export default function Composer({ onCreate }) {
     <div className="bg-white rounded-md shadow p-4 mb-6">
       <div className="flex gap-3">
         <img
-          src={users[0].avatar}
-          alt=""
+          src={user.avatar ?? "/dummy.png"}
+          alt={user?.name}
           className="h-11 w-11 rounded-full"
         />
         <textarea
