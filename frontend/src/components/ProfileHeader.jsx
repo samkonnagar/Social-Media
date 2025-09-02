@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ProfileHeader({ user }) {
+export default function ProfileHeader({ user, noOfPost }) {
   const navigate = useNavigate();
   return (
     <div className="bg-white rounded-md shadow overflow-hidden relative mb-2">
@@ -36,7 +36,7 @@ export default function ProfileHeader({ user }) {
 
         <div className="mt-4 flex gap-6">
           <div>
-            <div className="font-semibold text-lg">{"0"}</div>
+            <div className="font-semibold text-lg">{noOfPost}</div>
             <div className="text-sm text-gray-500">Posts</div>
           </div>
           <div>

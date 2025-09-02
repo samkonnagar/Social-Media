@@ -5,18 +5,35 @@ import Composer from "../components/Composer";
 import { dataObj } from "../context/authContext/AuthContext";
 import { getUserDetails } from "../api/auth";
 import UserNotFound from "../components/UserNotFound";
+import PostCard from "../components/PostCard";
+import { getPost } from "../api/post.js";
+import NoPostsCard from "../components/NoPostsCard.jsx";
 
 export default function Profile() {
   const { user } = dataObj();
   const { id } = useParams();
   const [userObj, setUserObj] = useState(null);
   const [userFound, setUserFound] = useState(false);
+  const [posts, setPosts] = useState({
+    data: [],
+    isFetching: true,
+    noOfPost: 0,
+  });
+
+  const fetchPost = (id) => {
+    setPosts((p) => ({ ...p, isFetching: true }));
+    getPost(id)
+      .then((res) => res?.data?.data)
+      .then((data) => {
+        setPosts({ isFetching: false, data: data, noOfPost: data.length });
+      });
+  };
 
   useEffect(() => {
     if (id === user?._id) {
       user.isOwnProfile = true;
       setUserObj(user);
-      setUserFound(true)
+      setUserFound(true);
     } else {
       getUserDetails(id)
         .then((res) => res.data)
@@ -24,36 +41,28 @@ export default function Profile() {
           const user = data?.data?.user;
           user.isOwnProfile = false;
           setUserObj(user);
-          setUserFound(true)
+          setUserFound(true);
         })
         .catch((err) => {
           setUserObj(null);
-          setUserFound(false)
+          setUserFound(false);
         });
     }
+    fetchPost(id);
   }, [id]);
 
   return (
     <>
-      {userObj && <ProfileHeader user={userObj} />}
+      {userObj && <ProfileHeader user={userObj} noOfPost={posts.noOfPost} />}
       {userObj?.isOwnProfile && <Composer />}
       {!userFound && <UserNotFound />}
-      {/* <div className="bg-white rounded-md shadow p-4">
-        <h3 className="font-semibold mb-4">Posts</h3>
-        <div className="grid grid-cols-3 gap-3">
-          {userPosts.length === 0 && (
-            <div className="text-gray-500">No posts yet</div>
-          )}
-          {userPosts.map((p) => (
-            <img
-              key={p.id}
-              src={p.images[0]}
-              alt=""
-              className="h-36 w-full object-cover rounded cursor-pointer"
-            />
-          ))}
-        </div>
-      </div> */}
+      {posts.noOfPost > 0 &&
+        posts.data.map((post) => (
+          <div className="bg-white rounded-md shadow p-4 mb-3" key={post._id}>
+            <PostCard post={post} currUser={user}/>
+          </div>
+        ))}
+      {!posts.isFetching && posts.noOfPost === 0 && <NoPostsCard/>}
     </>
   );
 }
