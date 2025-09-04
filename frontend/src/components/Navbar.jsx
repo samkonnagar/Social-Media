@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { users } from "../data/users";
 import { House } from "lucide-react";
+import { dataObj } from "../context/authContext/AuthContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { user } = dataObj();
   return (
     <header className="w-full bg-white dark:bg-gray-900 shadow sticky top-0 z-30">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -27,14 +28,12 @@ export default function Navbar() {
         </div>
 
         <nav className="flex items-center gap-4">
-          <Link
-            to="/"
-          >
-            <House className="text-white"/>
+          <Link to="/">
+            <House className="text-white" />
           </Link>
           <Link to="/profile/u1" className="flex items-center gap-2">
             <img
-              src={users[0].avatar}
+              src={user?.avatar ?? "/dummy.png"}
               className="h-8 w-8 rounded-full border"
               alt="me"
             />

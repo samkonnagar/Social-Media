@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Heart, MessageSquare, Share2, ThumbsUp } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { users } from "../data/users.js";
+import { MessageSquare, Share2, ThumbsUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Slider from "../utils/Slider.jsx";
+import { timeAgo } from "../utils/tool-fns.js";
 
 export default function PostCard({ post, currUser }) {
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
-  console.log(post);
 
   return (
     <article className="bg-white rounded-md shadow mb-6">
@@ -22,8 +21,15 @@ export default function PostCard({ post, currUser }) {
               onClick={() => navigate(`/profile/${post?.author?._id}`)}
             />
             <div>
-              <div className="font-semibold">{post?.author?.name}</div>
-              <div className="text-sm text-gray-500">{post?.createdAt}</div>
+              <div
+                className="font-semibold cursor-pointer hover:underline"
+                onClick={() => navigate(`/profile/${post?.author?._id}`)}
+              >
+                {post?.author?.name}
+              </div>
+              <div className="text-sm text-gray-500">
+                {timeAgo(post?.createdAt)}
+              </div>
             </div>
           </div>
           <button className="px-3 py-1 bg-purple-600 text-white rounded">

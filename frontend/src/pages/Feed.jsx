@@ -1,21 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Composer from "../components/Composer";
 import PostCard from "../components/PostCard";
-import { posts as initialPosts } from "../data/posts";
+import { dataObj } from "../context/authContext/AuthContext";
+import Loader from "../components/Loader";
+import { getFeed } from "../api/post";
 
 export default function Feed() {
-  const [posts, setPosts] = useState(initialPosts);
+  const { user } = dataObj();
+  const [posts, setPosts] = useState({
+    data: [],
+    isFetching: true,
+    isNotlast: true,
+  });
 
-  function addPost(npost) {
-    setPosts((p) => [npost, ...p]);
-  }
+  const fetchPost = (num = null) => {
+    setPosts((prev) => ({ ...prev, isFetching: true }));
+    getFeed(num)
+      .then((res) => res?.data?.data)
+      .then((data) => {
+        setPosts((prev) => ({
+          ...prev,
+          isFetching: false,
+          isNotlast: data.auto_avalable,
+          data: [...prev.data, ...data.posts],
+        }));
+      });
+  };
+
+  useEffect(() => {
+    if (posts.isNotlast) {
+      fetchPost();
+    }
+  }, []);
 
   return (
     <>
-      <Composer onCreate={addPost} />
-      {posts.map((p) => (
-        <PostCard key={p.id} post={p} />
+      <Composer />
+      {posts?.data.map((post) => (
+        <PostCard post={post} currUser={user} key={post?._id} />
       ))}
+      {posts?.isFetching && <Loader />}
     </>
   );
 }
