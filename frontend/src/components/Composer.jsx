@@ -1,34 +1,34 @@
 import React, { useState } from "react";
 import { dataObj } from "../context/authContext/AuthContext";
+import { createPost } from "../api/post";
 
-export default function Composer({ onCreate }) {
-  const {user} = dataObj()
+export default function Composer({ setPosts }) {
+  const { user } = dataObj();
   const [text, setText] = useState("");
-  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
 
   function handleFiles(e) {
-    const files = Array.from(e.target.files);
-    const urls = files.map((f) => URL.createObjectURL(f));
-    setImages((p) => [...p, ...urls]);
+    const getFiles = Array.from(e.target.files);
+    setFiles((p) => [...p, ...getFiles]);
   }
 
   function handlePost() {
-    if (!text && images.length === 0) return;
-    const newPost = {
-      id: "p" + (Math.random() * 10000).toFixed(0),
-      authorId: "u1",
-      authorName: "Rohit Sharma",
-      authorAvatar: "/src/assets/default-avatar.jpg",
-      time: "now",
-      images,
-      caption: text,
-      likes: 0,
-      comments: 0,
-      tags: [],
-    };
-    onCreate?.(newPost);
+    if (!text && files.length === 0) return;
+    const formData = new FormData();
+    formData.append("caption", text); // text field
+
+    // append multiple files
+    for (let i = 0; i < files.length; i++) {
+      formData.append("post_imgs", files[i]);
+    }
+
+    createPost(formData)
+      .then((res) => res?.data?.data)
+      .then((post) => setPosts((p) => ({ ...p, data: [post, ...p.data] })))
+      .catch((err) => console.warn(err));
+
     setText("");
-    setImages([]);
+    setFiles([]);
   }
 
   return (
@@ -48,16 +48,18 @@ export default function Composer({ onCreate }) {
         />
       </div>
 
-      {images.length > 0 && (
+      {files.length > 0 && (
         <div className="mt-3 grid grid-cols-3 gap-2">
-          {images.map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              className="h-24 w-full object-cover rounded"
-              alt=""
-            />
-          ))}
+          {files
+            .map((f) => URL.createObjectURL(f))
+            .map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                className="h-24 w-full object-cover rounded"
+                alt="image"
+              />
+            ))}
         </div>
       )}
 

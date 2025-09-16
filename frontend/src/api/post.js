@@ -6,7 +6,12 @@ const API = axios.create({
   withCredentials: true,
 });
 
-const createPost = (data) => API.post("/", data);
+const createPost = (data) =>
+  API.post("/", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
 const getFeed = (num = null) => (num ? API.get(`?auto=${num}`) : API.get("/"));
 

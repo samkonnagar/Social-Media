@@ -35,7 +35,7 @@ export default function Feed() {
 
   return (
     <>
-      <Composer />
+      <Composer setPosts={setPosts}/>
       {posts?.data.map((post) => (
         <PostCard post={post} currUser={user} key={post?._id} />
       ))}

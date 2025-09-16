@@ -54,15 +54,17 @@ export default function Profile() {
   return (
     <>
       {userObj && <ProfileHeader user={userObj} noOfPost={posts.noOfPost} />}
-      {userObj?.isOwnProfile && <Composer />}
+      {userObj?.isOwnProfile && (
+        <Composer setPosts={setPosts}/>
+      )}
       {!userFound && <UserNotFound />}
       {posts.noOfPost > 0 &&
         posts.data.map((post) => (
           <div className="bg-white rounded-md shadow p-4 mb-3" key={post._id}>
-            <PostCard post={post} currUser={user}/>
+            <PostCard post={post} currUser={user} />
           </div>
         ))}
-      {!posts.isFetching && posts.noOfPost === 0 && <NoPostsCard/>}
+      {!posts.isFetching && posts.noOfPost === 0 && <NoPostsCard />}
     </>
   );
 }
