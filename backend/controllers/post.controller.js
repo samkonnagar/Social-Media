@@ -45,7 +45,7 @@ const handleNewPost = async (req, res) => {
 
 const handleAllPublicPosts = async (req, res) => {
   let skip = 0;
-  let limit = 20;
+  let limit = 10;
   let getNum = 0;
   if (req.query?.auto) {
     getNum = Number(req.query.auto);
@@ -53,7 +53,7 @@ const handleAllPublicPosts = async (req, res) => {
     if (isNaN(getNum) || getNum < 1) {
       throw new ApiError(400, "Invalid Datatype");
     }
-    skip = (getNum - 1) * limit + 20;
+    skip = (getNum - 1) * limit + 10;
   }
   const posts = await PostModel.find({ privacy: "public" })
     .populate("author", "name avatar")
