@@ -54,9 +54,7 @@ export default function Profile() {
   return (
     <>
       {userObj && <ProfileHeader user={userObj} noOfPost={posts.noOfPost} />}
-      {userObj?.isOwnProfile && (
-        <Composer setPosts={setPosts}/>
-      )}
+      {userObj?.isOwnProfile && <Composer setPosts={setPosts} />}
       {!userFound && <UserNotFound />}
       {posts.noOfPost > 0 &&
         posts.data.map((post) => (

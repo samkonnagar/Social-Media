@@ -31,11 +31,12 @@ export default function Navbar() {
           <Link to="/">
             <House className="text-white" />
           </Link>
-          <Link to="/profile/u1" className="flex items-center gap-2">
+          <Link to={`/profile/${user._id}`} className="flex items-center gap-2">
             <img
               src={user?.avatar ?? "/dummy.png"}
               className="h-8 w-8 rounded-full border"
               alt="me"
+              title={user.name}
             />
           </Link>
         </nav>

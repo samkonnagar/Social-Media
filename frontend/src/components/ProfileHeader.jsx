@@ -1,8 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import FollowBtn from "./FollowBtn";
+import { dataObj } from "../context/authContext/AuthContext";
 
 export default function ProfileHeader({ user, noOfPost }) {
-  const navigate = useNavigate();
+  const { user: loggdinUser } = dataObj();
+  const followObj = {
+    isOwnProfile: loggdinUser._id === user._id,
+    alreadyFollow: user.followers.includes(loggdinUser._id),
+    userId: user._id,
+  };
+  
   return (
     <div className="bg-white rounded-md shadow overflow-hidden relative mb-2">
       <div
@@ -25,9 +32,7 @@ export default function ProfileHeader({ user, noOfPost }) {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-2 cursor-pointer py-1 text-sm bg-purple-600 text-white rounded">
-              Follow
-            </button>
+            <FollowBtn followObj={followObj} />
             <button className="px-2 cursor-pointer py-1 text-sm border rounded">
               Message
             </button>
@@ -40,11 +45,15 @@ export default function ProfileHeader({ user, noOfPost }) {
             <div className="text-sm text-gray-500">Posts</div>
           </div>
           <div>
-            <div className="font-semibold text-lg">{user?.followers.length}</div>
+            <div className="font-semibold text-lg">
+              {user?.followers.length}
+            </div>
             <div className="text-sm text-gray-500">Followers</div>
           </div>
           <div>
-            <div className="font-semibold text-lg">{user?.following.length}</div>
+            <div className="font-semibold text-lg">
+              {user?.following.length}
+            </div>
             <div className="text-sm text-gray-500">Following</div>
           </div>
         </div>

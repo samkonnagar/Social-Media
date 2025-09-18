@@ -3,10 +3,17 @@ import { MessageSquare, Share2, ThumbsUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Slider from "../utils/Slider.jsx";
 import { timeAgo } from "../utils/tool-fns.js";
+import FollowBtn from "./FollowBtn.jsx";
 
 export default function PostCard({ post, currUser }) {
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
+
+  const followObj = {
+    isOwnProfile: currUser._id === post.author._id,
+    alreadyFollow: post?.author?.followers?.includes(currUser._id),
+    userId: post.author._id,
+  };
 
   return (
     <article className="bg-white rounded-md shadow mb-6">
@@ -32,9 +39,7 @@ export default function PostCard({ post, currUser }) {
               </div>
             </div>
           </div>
-          <button className="px-3 py-1 bg-purple-600 text-white rounded">
-            Follow
-          </button>
+          <FollowBtn followObj={followObj} />
         </div>
 
         {/* media */}

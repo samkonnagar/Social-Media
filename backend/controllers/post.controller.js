@@ -56,7 +56,7 @@ const handleAllPublicPosts = async (req, res) => {
     skip = (getNum - 1) * limit + 10;
   }
   const posts = await PostModel.find({ privacy: "public" })
-    .populate("author", "name avatar")
+    .populate("author", "name avatar followers")
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
